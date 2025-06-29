@@ -2,9 +2,9 @@
 
 A weather bot with alerts and forecasts for Canadian Meshtastic users, licensed under the GPLv3. Designed to run on a Raspberry Pi or any computer with a connected Meshtastic device.
 
-### Screenshot
+![Akita WeatherBot Logo](AkitaWeatherBot.png)
+AkitaWeatherBot.png
 
-![Akita WeatherBot UI Mockup](weatherbot-screenshot.jpg)
 
 ## Our Mission
 
@@ -38,6 +38,11 @@ Direct Message (DM) your bot's node with any of the following commands:
 - `test` : Bot will return a simple acknowledgement.
 - `tst-detail` : Returns an acknowledgement with connection details (RSSI, SNR).
 - `advertise` : Bot sends its menu on the public channel.
+
+### Screenshot
+
+![Akita WeatherBot](weatherbot-screenshot.jpg)
+
 
 ## Requirements
 
