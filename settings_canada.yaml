@@ -1,0 +1,74 @@
+# -----------------------------------------------------------------------------
+# Akita WeatherBot - Canadian Configuration
+# -----------------------------------------------------------------------------
+
+# A list of node IDs (as strings) that are whitelisted to use the bot.
+# The node ID is the ! followed by 8 characters in your node list.
+# Example: MYNODES: ["!c4b787a0", "!a1b2c3d4"]
+# Set FIREWALL to true to enforce this list.
+MYNODES:
+  - "!c4b787a0" # Example Node ID, change this
+  - "!a1b2c3d4" # Example Node ID, change this
+
+# DM_MODE = true: Only respond to Direct Messages.
+# DM_MODE = false: Respond to messages on any channel the bot is on.
+# (RECOMMENDATION: Keep true to reduce network spam)
+DM_MODE: true
+
+# FIREWALL = true: Only nodes in MYNODES can interact with the bot.
+# FIREWALL = false: Any node can interact with the bot.
+FIREWALL: false
+
+# -----------------------------------------------------------------------------
+# ECCC Weather & Alert Configuration (CRITICAL)
+# -----------------------------------------------------------------------------
+
+# The forecast site code from Environment Canada.
+# See README.md for instructions on how to find this for your location.
+# This example code is for Toronto, ON. YOU MUST CHANGE THIS.
+ECCC_LOCATION_CODE: "s0000458" 
+
+# Two-letter province code for filtering weather alerts (e.g., ON, BC, QC, AB).
+# This ensures you only get alerts for your region.
+ALERT_PROVINCE_CODE: "ON"
+
+# It is good practice to identify your application to the data provider.
+# Please change these to something unique to you.
+USER_AGENT_APP: "AkitaWeatherBot/1.1"
+USER_AGENT_EMAIL: "your-email@example.com"
+
+# -----------------------------------------------------------------------------
+# Bot Behavior Configuration
+# -----------------------------------------------------------------------------
+
+# How often (in seconds) to check for new weather alerts.
+# ECCC updates alerts as they are issued. Checking every 5-10 minutes is reasonable.
+ALERT_CHECK_INTERVAL: 300  # 5 minutes
+
+# Delay (in seconds) between sending parts of a multi-message reply.
+# A longer delay helps prevent messages from arriving out of order on the mesh.
+MESSAGE_DELAY: 15  
+
+# Set to false to exclude the detailed description from alerts.
+# Descriptions can be very long (4-5 messages). False is recommended for most networks.
+ALERT_INCLUDE_DESCRIPTION: false 
+
+# Enable/disable multi-message commands.
+# If you are on a high-traffic mesh, you may want to disable these to be a good citizen.
+ENABLE_7DAY_FORECAST: true  
+ENABLE_5DAY_FORECAST:  true  
+ENABLE_HOURLY_WEATHER: true 
+
+# When true, the '?' menu includes all commands.
+# When false, the '?' menu shows only single-message commands.
+FULL_MENU: true
+
+# -----------------------------------------------------------------------------
+# Node Stability (Optional)
+# -----------------------------------------------------------------------------
+
+# Some firmware versions may benefit from a daily reboot.
+ENABLE_AUTO_REBOOT: false  
+AUTO_REBOOT_HOUR: 3        # Hour for daily reboot (24-hour format, e.g., 3 for 3 AM)
+AUTO_REBOOT_MINUTE: 0      # Minute for daily reboot
+REBOOT_DELAY_SECONDS: 10   # Delay on the node to prepare for reboot.
