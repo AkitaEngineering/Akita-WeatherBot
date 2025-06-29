@@ -1,0 +1,139 @@
+# Akita WeatherBot Deployment Guide
+
+This guide provides instructions for deploying the Akita WeatherBot. Following these steps will help you set up a stable and reliable weather service for your Meshtastic network.
+
+---
+
+## Option 1: Simple Deployment (Desktop/Laptop)
+
+This method is perfect for testing, development, or if you only need the bot to be online when your computer is running.
+
+### 1. Complete the Installation
+
+Before proceeding, ensure you have followed all the steps in the `README.md` file's **Installation** section. This includes cloning the repository, creating a virtual environment, and installing the dependencies with `pip`.
+
+### 2. Find Your Meshtastic Device's Serial Port
+
+You need to tell the script how to communicate with your radio.
+
+* **Windows:**
+    1.  Connect your Meshtastic device via USB.
+    2.  Open the **Device Manager**.
+    3.  Look under the "Ports (COM & LPT)" section. Your device will appear as a COM port (e.g., `COM3`, `COM7`).
+
+* **macOS:**
+    1.  Connect the device via USB.
+    2.  Open the **Terminal** app.
+    3.  Run the command `ls /dev/cu.*`. Your device will likely be listed as something like `/dev/cu.usbserial-0001` or `/dev/cu.SLAB_USBtoUART`.
+
+* **Linux (including Raspberry Pi):**
+    1.  Connect the device via USB.
+    2.  Open your terminal.
+    3.  Run the command `ls /dev/ttyUSB*` or `ls /dev/ttyACM*`. The device will typically show up as `/dev/ttyUSB0`.
+
+### 3. Run the Bot
+
+1.  Navigate to the `Akita_WeatherBot` directory in your terminal.
+2.  Make sure your virtual environment is activated (`source .venv/bin/activate`).
+3.  Run the bot, replacing the `--port` value with the one you found above.
+
+    ```bash
+    # Example for Linux
+    python akitabot.py --port /dev/ttyUSB0
+    ```bash
+    # Example for Windows
+    python akitabot.py --port COM7
+    ```bash
+    # Example for macOS
+    python akitabot.py --port /dev/cu.usbserial-0001
+    ```
+The bot is now running! You will see log messages in the terminal. To stop the bot, simply press `Ctrl+C` in the terminal window.
+
+---
+
+## Option 2: Robust Deployment (Raspberry Pi as a 24/7 Service)
+
+This is the recommended method for a permanent, "set-it-and-forget-it" bot. We will use `systemd`, the standard Linux service manager, to ensure the bot starts automatically on boot and restarts if it ever crashes.
+
+### 1. Prerequisites
+
+* A Raspberry Pi with Raspberry Pi OS (or another Linux distribution) installed.
+* The Raspberry Pi is connected to your network (Wi-Fi or Ethernet).
+* You have completed the full installation process from the `README.md` on the Raspberry Pi.
+* You have tested the bot manually using the "Simple Deployment" steps above to confirm it works correctly.
+
+### 2. Create a `systemd` Service File
+
+This file tells `systemd` how to run, manage, and monitor your bot.
+
+1.  From your terminal on the Raspberry Pi, create a new service file using the `nano` text editor:
+    ```bash
+    sudo nano /etc/systemd/system/akitabot.service
+    ```
+
+2.  Paste the following content into the editor. **You must modify the `WorkingDirectory` and `ExecStart` paths to match your own setup.**
+    ```ini
+    [Unit]
+    Description=Akita WeatherBot for Meshtastic
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=pi
+    
+    # --- IMPORTANT: CHANGE THESE PATHS ---
+    # Path to your Akita_WeatherBot project folder
+    WorkingDirectory=/home/pi/Akita_WeatherBot
+    
+    # Path to the python executable in your virtual environment AND your bot script
+    ExecStart=/home/pi/Akita_WeatherBot/.venv/bin/python /home/pi/Akita_WeatherBot/akitabot.py --port /dev/ttyUSB0
+    
+    Restart=on-failure
+    RestartSec=10
+    
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    **Configuration Notes:**
+    * `User`: If you are using a username other than `pi`, change it here.
+    * `WorkingDirectory`: Use the `pwd` command inside your project folder to find the full, absolute path and paste it here.
+    * `ExecStart`: This is the most critical line. It must contain the **full path** to the `python` executable inside your `.venv` directory, followed by the **full path** to `akitabot.py`, and finally the correct `--port` argument.
+
+3.  Save the file and exit `nano` by pressing `Ctrl+X`, then `Y`, then `Enter`.
+
+### 3. Manage the Service
+
+Now you can use the `systemctl` command to control your new service.
+
+1.  **Reload `systemd`** to make it aware of the new `akitabot.service` file:
+    ```bash
+    sudo systemctl daemon-reload
+    ```
+
+2.  **Enable the service** to start automatically on boot:
+    ```bash
+    sudo systemctl enable akitabot.service
+    ```
+
+3.  **Start the service** right now:
+    ```bash
+    sudo systemctl start akitabot.service
+    ```
+
+### 4. Check the Status and Logs
+
+Your bot should now be running in the background.
+
+* **Check the status** of the service:
+    ```bash
+    sudo systemctl status akitabot.service
+    ```
+    If everything is working, you should see `active (running)`.
+
+* **View the logs** to see the bot's output in real-time (press `Ctrl+C` to exit):
+    ```bash
+    sudo journalctl -u akitabot.service -f
+    ```
+
+Your Akita WeatherBot is now fully deployed and will run reliably 24/7 on your Raspberry Pi.
