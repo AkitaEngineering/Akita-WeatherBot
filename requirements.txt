@@ -1,0 +1,11 @@
+# For interacting with the Meshtastic radio
+meshtastic
+
+# For parsing the settings_canada.yaml configuration file
+PyYAML
+
+# For making HTTP requests to the ECCC data servers
+requests
+
+# For efficiently and robustly parsing ECCC's XML data
+lxml
