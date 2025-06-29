@@ -3,7 +3,6 @@
 A weather bot with alerts and forecasts for Canadian Meshtastic users, licensed under the GPLv3. Designed to run on a Raspberry Pi or any computer with a connected Meshtastic device.
 
 ![Akita WeatherBot Logo](AkitaWeatherBot.png)
-AkitaWeatherBot.png
 
 
 ## Our Mission
