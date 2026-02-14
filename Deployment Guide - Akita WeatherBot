@@ -31,23 +31,31 @@ You need to tell the script how to communicate with your radio.
     2.  Open your terminal.
     3.  Run the command `ls /dev/ttyUSB*` or `ls /dev/ttyACM*`. The device will typically show up as `/dev/ttyUSB0`.
 
-### 3. Run the Bot
+3. Run the Bot
 
-1.  Navigate to the `Akita_WeatherBot` directory in your terminal.
-2.  Make sure your virtual environment is activated (`source .venv/bin/activate`).
+1.  Navigate to the `Akita-WeatherBot` directory in your terminal.
+2.  Make sure your virtual environment is activated.
 3.  Run the bot, replacing the `--port` value with the one you found above.
 
+    Linux / macOS example:
+
     ```bash
-    # Example for Linux
     python akitabot.py --port /dev/ttyUSB0
-    ```bash
-    # Example for Windows
+    ```
+
+    Windows PowerShell example:
+
+    ```powershell
     python akitabot.py --port COM7
+    ```
+
+    macOS example:
+
     ```bash
-    # Example for macOS
     python akitabot.py --port /dev/cu.usbserial-0001
     ```
-The bot is now running! You will see log messages in the terminal. To stop the bot, simply press `Ctrl+C` in the terminal window.
+
+    The bot is now running! You will see log messages in the terminal. To stop the bot, press `Ctrl+C`.
 
 ---
 

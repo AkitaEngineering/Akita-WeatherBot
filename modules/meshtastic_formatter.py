@@ -92,14 +92,15 @@ class MeshtasticFormatter:
         if not hourly_data:
             return "Could not retrieve hourly forecast."
         
-        # Group into chunks of 6 hours for readability
-        chunks = [hourly_data[i:i + 6] for i in range(0, 24, 6)]
+        # Group into chunks of 6 hours for readability; base on available data (cap at 24)
+        count = min(len(hourly_data), 24)
+        chunks = [hourly_data[i:i + 6] for i in range(0, count, 6)]
         output_parts = []
         for chunk in chunks:
             part = []
             for entry in chunk:
-                emoji = self.get_emoji(entry['icon'])
-                part.append(f"{entry['hour']}h:{entry['temp']}° {entry['pop']}% {emoji}")
+                emoji = self.get_emoji(entry.get('icon'))
+                part.append(f"{entry.get('hour')}h:{entry.get('temp')}° {entry.get('pop')}% {emoji}")
             output_parts.append("\n".join(part))
         return "\n\n".join(output_parts)
 

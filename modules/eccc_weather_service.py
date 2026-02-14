@@ -94,11 +94,19 @@ class ECCCWeatherService:
         forecasts = []
         # XPath to get each hourly forecast entry
         for entry in root.xpath('//hourlyForecastGroup/hourlyForecast'):
-            hour = entry.get('dateTimeUTC')[-4:-2] # Extract hour
+            # dateTimeUTC may be missing or in different formats; guard access
+            dt_attr = entry.get('dateTimeUTC') or entry.findtext('dateTimeUTC')
+            hour = ''
+            if dt_attr and len(dt_attr) >= 4:
+                try:
+                    hour = dt_attr[-4:-2]
+                except Exception:
+                    hour = ''
+
             condition = entry.findtext('condition')
             icon = entry.findtext('iconCode')
             temp = entry.findtext('temperature')
-            pop = entry.findtext('lop') # Likelihood of Precipitation
+            pop = entry.findtext('lop') or entry.findtext('pop')  # try common tags
             
             forecasts.append({
                 'hour': hour,
@@ -128,13 +136,17 @@ class ECCCWeatherService:
         ns = {'cap': 'urn:oasis:names:tc:emergency:cap:1.2'}
         
         alerts = []
-        # Find all entries where the area description contains the province code
-        for entry in root.xpath(f"//cap:alert[contains(cap:info/cap:area/cap:areaDesc, '{self.province_code}')]"):
+        # Iterate CAP alerts and filter by area description containing the province code.
+        for entry in root.xpath('//cap:alert', namespaces=ns):
+            area_desc = entry.findtext('cap:info/cap:area/cap:areaDesc', namespaces=ns)
+            if not area_desc or self.province_code not in area_desc:
+                continue
+
             alert_id = entry.findtext('cap:identifier', namespaces=ns)
             event = entry.findtext('cap:info/cap:event', namespaces=ns)
             headline = entry.findtext('cap:info/cap:headline', namespaces=ns)
             description = entry.findtext('cap:info/cap:description', namespaces=ns)
-            
+
             alerts.append({
                 'id': alert_id,
                 'event': event,

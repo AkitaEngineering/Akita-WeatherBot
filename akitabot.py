@@ -1,5 +1,6 @@
 import meshtastic
 import meshtastic.serial_interface
+import meshtastic.tcp_interface
 import yaml
 import time
 import argparse
@@ -59,20 +60,31 @@ class AkitaBot:
 
     def on_receive(self, packet, interface):
         """Callback fired when a packet is received."""
-        if packet.get('decoded', {}).get('portnum') != 'TEXT_MESSAGE_APP':
-            return # Not a text message
+        decoded = packet.get('decoded', {}) or {}
+
+        # Only proceed if this packet contains a text payload
+        if 'text' not in decoded:
+            return  # Not a text message
 
         sender_id = packet.get('from')
-        message_text = packet.get('decoded', {}).get('text', '').strip().lower()
+        message_text = decoded.get('text', '').strip().lower()
         
         # Try to get the node object to find its string ID for the firewall
         sender_node = interface.nodes.get(sender_id)
-        sender_node_id_str = sender_node.get('user', {}).get('id') if sender_node else None
+        sender_node_id_str = None
+        try:
+            if sender_node:
+                sender_node_id_str = sender_node.get('user', {}).get('id')
+        except Exception:
+            # Fallback: leave sender_node_id_str as None if structure is unexpected
+            sender_node_id_str = None
 
         if not message_text or sender_id == self.bot_node_num:
             return # Ignore empty messages or messages from ourselves
 
-        logging.info(f"Received '{message_text}' from {sender_node_id_str or sender_id:x}")
+        # Safely build a display string for logging (avoid formatting strings with :x)
+        sender_display = sender_node_id_str if sender_node_id_str else format(sender_id, 'x') if isinstance(sender_id, int) else str(sender_id)
+        logging.info(f"Received '{message_text}' from {sender_display}")
 
         # Enforce DM Mode if enabled
         if self.settings.get('DM_MODE') and packet.get('to') != self.bot_node_num:
@@ -146,7 +158,9 @@ class AkitaBot:
         messages = [text[i:i+MAX_LEN] for i in range(0, len(text), MAX_LEN)]
         
         for i, msg in enumerate(messages):
-            logging.info(f"Sending reply to {destination_id:x}: {msg}")
+            # Build a safe display string for the destination id for logging
+            dest_display = format(destination_id, 'x') if isinstance(destination_id, int) else str(destination_id)
+            logging.info(f"Sending reply to {dest_display}: {msg}")
             self.interface.sendText(msg, destinationId=destination_id)
             if i < len(messages) - 1:
                 time.sleep(self.settings.get('MESSAGE_DELAY', 5))

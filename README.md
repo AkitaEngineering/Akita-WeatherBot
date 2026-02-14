@@ -55,18 +55,34 @@ Direct Message (DM) your bot's node with any of the following commands:
 Clone this repository:
 
 ```bash
-git clone https://github.com/AkitaEngineering/Akita_WeatherBot.git
+git clone https://github.com/AkitaEngineering/Akita-WeatherBot.git
 ```
 
 Navigate into the folder:
 ```bash
-cd Akita_WeatherBot
+cd Akita-WeatherBot
 ```
 
-Setup and activate a virtual environment:
+Setup and activate a virtual environment (examples):
+
+# Create the venv
 ```bash
-python3 -m venv .venv
+python -m venv .venv
+```
+
+# Activate - Linux / macOS
+```bash
 source .venv/bin/activate
+```
+
+# Activate - Windows PowerShell
+```powershell
+. .\.venv\Scripts\Activate.ps1
+```
+
+# Activate - Windows cmd.exe
+```cmd
+. .\.venv\Scripts\activate.bat
 ```
 
 Install the required dependencies:
@@ -80,22 +96,23 @@ Connect your Meshtastic device to your computer via USB.
 ---
 
 ### How to Run
-* **On Linux:**
-    ```bash
-    python akitabot.py --port /dev/ttyUSB0
-    ```
-* **On macOS:**
-    ```bash
-    python akitabot.py --port /dev/cu.usbserial-0001
-    ```
-* **On Windows:**
-    ```bash
-    python akitabot.py --port COM7
-    ```
-* **Using TCP (if your node is on your network):**
-    ```bash
-    python akitabot.py --host meshtastic.local
-    ```
+
+Run the bot using the appropriate port or host option for your Meshtastic device.
+
+Linux / macOS (example):
+```bash
+python akitabot.py --port /dev/ttyUSB0
+```
+
+Windows (example, PowerShell):
+```powershell
+python akitabot.py --port COM7
+```
+
+Using TCP (if your node is on your network):
+```bash
+python akitabot.py --host meshtastic.local
+```
 
 ---
 
@@ -120,4 +137,17 @@ This file is the heart of your bot's configuration.
 
 ---
 ### License
-This project is licensed under the **GNU General Public License v3.0**.
+This project is distributed under the **GNU General Public License v3.0**. See the `LICENSE` file for the full text.
+
+---
+## Documentation
+
+Extended docs and quickstart instructions are available in the `docs/` folder:
+
+- `docs/QUICKSTART.md` — minimal setup and run steps for local testing.
+- `docs/EXAMPLES.md` — example commands and sample outputs.
+- `docs/TROUBLESHOOTING.md` — common issues and fixes.
+
+Refer to the `Deployment Guide - Akita WeatherBot` for `systemd`-based production deployments on Linux.
+
+Start here: `docs/index.md` for a single place to find the quickstart, examples, and troubleshooting.
